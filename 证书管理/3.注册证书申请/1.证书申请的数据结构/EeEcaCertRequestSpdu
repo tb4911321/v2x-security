@@ -1,0 +1,52 @@
+      protocolVersion 协议版本
+        content(V2XSecContent_t) 安全content
+            ├──present         安全content类型:证书请求(V2XSecContent_PR_signedCertificateRequest)
+            └──SignedCertificateRequest_t  签名证书请求 [注意，默认证书类型是opaque类型，需要将SignedCertificateRequest_t转换成opaque类型
+                ├──hashId    　证书的hash算法(HashAlgorithm_sm3)
+                ├──tbsRequest　证书申请请求结构
+                │   ├──version 版本信息(1)
+                │   └──content 证书申请内容
+                │        ├──present    证书申请的类型(ScmsPdu__content_PR_eca_ee)
+                │        └──choice
+                │           └──eca_ee　注册证书申请结构
+                │                ├──present 注册证书的申请类型(EcaEeInterfacePdu_PR_eeEcaCertRequest)
+                │                └──choice
+                │                    └──eeEcaCertRequest   v2x设备向ECA发送注册证书申请请求
+                │                        ├──version         eeEcaCertRequest版本号(默认１)
+                │                        ├──generationTime　生成证书申请的时间
+                │                        ├──type            证书的类型(CertificateType_explicit)
+                │                        ├──tbsCert         包含ECA用来申请EC的参数
+                │                        │      ├──id  证书标识
+                │                        │      │   ├──present  证书持有者的类型(CertificateId_PR_name)
+                │                        │      │   └──choice
+                │                        │      │         └──name       用于在非匿名证书情况下，表示证书持有者，是人类可读的(读取license的文件的32字节)
+                │                        │      ├──cracaid      证书撤销列表的CRL-CA标识，不使用的话设置成０
+                │                        │      ├──crlSeries        CRL序列号，不使用全部设置为０
+                │                        │      ├──validityPeriod   证书有效期
+                │                        │      │       ├──start    开始时间
+                │                        │      │       └──duration     结束时间:start + duration
+                │                        │      │            ├──present     时间间隔单位(Duration_PR_years)
+                │                        │      │            └──choice
+                │                        │      │                └── years      间隔(1:1年)
+                │                        │      └──verifyKeyIndicator       验证公钥
+                │                        │         ├──present       验证公钥类型,显示证书(VerificationKeyIndicator_PR_verificationKey)
+                │                        │         └──choice
+                │                        │             └──verificationKey
+                │                        │                 ├──present       签名算法(PublicVerificationKey_PR_ecsigSm2)
+                │                        │                 └──choice
+                │                        │                     └──ecsigSm2      sm2签名算法
+                │                        │                         ├──present   秘钥压缩类型(EccP256CurvePoint_PR_compressed_y_1/EccP256CurvePoint_PR_compressed_y_0)
+                │                        │                         └──choice    可选(也可以是未压缩的公钥信息)
+                │                        │                             ├──compressed_y_1  公钥信息(32字节)
+                │                        │                             └──compressed_y_0  公钥信息(32字节)
+                │                        └──canonicalId　用于存放正则id(暂时未使用)
+                ├──signer 签名者情报
+                │    ├──present　签名者类型(SignerIdentifier_PR_self)
+                │    └──choice
+                │        └──self    自签名(0)
+                └──signature　签名数据
+                    ├──present 签名值的算法类型(Signature_PR_sm2Signature)
+                    └──choice
+                        └──sm2Signature　签名值
+                            ├──rSig    　签名r值(32字节)
+                            └──sSig      签名s值(32字节)
