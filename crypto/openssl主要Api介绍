@@ -1,0 +1,41 @@
+BIGNUM *BN_new(void);
+BN_new() 分配并初始化一个BIGNUM结构
+
+BIGNUM *BN_bin2bn(const unsigned char *s, int len, BIGNUM *ret);
+BN_bin2bn() 将s处长度为len的大端形式的正整数转换为BIGNUM并将其放在ret中。如果ret为 NULL，则创建一个新的BIGNUM。
+
+int BN_bn2bin(const BIGNUM *a, unsigned char *to);
+BN_bn2bin() 将a的绝对值转换为大端形式并将其存储在to 中。to必须指向内存的 BN_num_bytes( a ) 字节
+
+int BN_bn2binpad(const BIGNUM *a, unsigned char *to, int tolen);
+BN_bn2binpad() 还将a的绝对值转换为大端形式并将其存储在to 中。tolen指示输出缓冲区的长度。如有必要，结果用零填充。如果tolen小于 BN_num_bytes( a )，则返回错误。
+
+
+const BIGNUM *EC_GROUP_get0_order(const EC_GROUP *group);
+EC_GROUP_get0_order() 返回一个指向组订单的内部指针
+
+int BN_add(BIGNUM *r, const BIGNUM *a, const BIGNUM *b);
+BN_add() 将a和b相加，并将结果放在r ( r=a+b) 中。r可以是与a或b相同的BIGNUM。
+
+int BN_sub(BIGNUM *r, const BIGNUM *a, const BIGNUM *b);
+BN_sub() 从 a 中减去b并将结果放在r ( ) 中。r可以是与a或b相同的BIGNUM。r=a-b
+
+int BN_mul(BIGNUM *r, BIGNUM *a, BIGNUM *b, BN_CTX *ctx);
+BN_mul() 将a和b相乘并将结果放在r ( r=a*b) 中。r可以是与a或b相同的BIGNUM。要乘以 2 的
+
+int BN_mod_add(BIGNUM *r, BIGNUM *a, BIGNUM *b, const BIGNUM *m,
+                BN_CTX *ctx);
+BN_mod_add() 将a与b模m相加，并将非负结果放在r中。
+
+int BN_mod_sub(BIGNUM *r, BIGNUM *a, BIGNUM *b, const BIGNUM *m, BN_CTX *ctx);
+BN_mod_sub()从模m中减去b并将非负结果放在r中。
+
+int BN_mod_mul(BIGNUM *r, BIGNUM *a, BIGNUM *b, const BIGNUM *m, BN_CTX *ctx);
+BN_mod_mul() 将a乘以b并找到对应于模m ( r=(a*b) mod m) 的非负余数。r可以是与a或b相同的BIGNUM。
+
+int EC_POINT_add(const EC_GROUP *group, EC_POINT *r, const EC_POINT *a,  const EC_POINT *b, BN_CTX *ctx);
+EC_POINT_add 将两个点a和b相加，并将结果放在r中。类似地，EC_POINT_dbl 将点a加倍并将结果放在r中。在这两种情况下，r是a或b之一都是有效的
+
+size_t EC_POINT_point2buf(const EC_GROUP *group, const EC_POINT *point, point_conversion_form_t form,unsigned char **pbuf, BN_CTX *ctx);
+                           
+函数 EC_POINT_point2buf() 分配一个合适长度的缓冲区，并以八位字节格式向其中写入一个 EC_POINT。分配的缓冲区被写入*pbuf并返回其长度。调用者必须通过调用 OPENSSL_free() 来释放分配的缓冲区。由于分配的缓冲区值被写入*pbuf，因此pbuf参数不得为NULL。
